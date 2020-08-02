@@ -11,7 +11,7 @@ public class tpmms {
 
     public static ArrayList<File> readFile(String filename) {
         ArrayList<File> fileList = new ArrayList<>();
-        Integer[] fileContents = new Integer[100];
+        ArrayList<Integer> fileContents = new ArrayList<>();
         int run_index = 0;
         int numFiles = 1;
         try {
@@ -20,20 +20,14 @@ public class tpmms {
             String data = myReader.nextLine();
             while (data != null) {
                 if (run_index != 0 && run_index % 100 == 0) {
-                    Arrays.sort(fileContents);
-                    for (int x = 0; x < fileContents.length; x++) {
-
-                        System.out.print(fileContents[x]);
-                        System.out.print(" ");
-                        System.out.println();
-                    }
+                    Collections.sort(fileContents);
                     fileList.add(writeFile(fileContents, numFiles));
                     numFiles++;
-                    fileContents = new Integer[100];
+                    fileContents = new ArrayList<>();
 
                 }
                 Integer data_int = Integer.valueOf(data);
-                fileContents[run_index % 100] = data_int;
+                fileContents.add(data_int);
                 try {
                     data = myReader.nextLine();
                 } catch (NoSuchElementException e) {
@@ -43,10 +37,8 @@ public class tpmms {
                 run_index++;
                 // System.out.println(data);
             }
-            if (fileContents.length > 0) {
-                List<Integer> newList = Arrays.asList(fileContents);
-                System.out.println(newList.toString());
-                Collections.sort(newList);
+            if (fileContents.size() > 0) {
+                Collections.sort(fileContents);
                 fileList.add(writeFile(fileContents, numFiles));
             }
             myReader.close();
@@ -59,7 +51,7 @@ public class tpmms {
 
     }
 
-    public static File writeFile(Integer[] sortedArray, Integer numFiles) {
+    public static File writeFile(ArrayList<Integer> sortedArray, Integer numFiles) {
 
         try {
             File myObj = new File("run" + numFiles.toString() + ".txt");
@@ -72,9 +64,9 @@ public class tpmms {
             try {
                 FileWriter myWriter = new FileWriter(myObj.getName());
                 int i = 0;
-                while (i < sortedArray.length) {
-                    System.out.println(sortedArray[i]);
-                    myWriter.write(Integer.toString(sortedArray[i]));
+                while (i < sortedArray.size()) {
+                    System.out.println(sortedArray.get(i));
+                    myWriter.write(Integer.toString(sortedArray.get(i)));
                     myWriter.write('\n');
                     i++;
                 }
