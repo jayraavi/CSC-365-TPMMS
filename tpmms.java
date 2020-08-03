@@ -1,8 +1,6 @@
 import java.io.*;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.io.FileWriter;
 import java.util.Collections;
@@ -87,11 +85,41 @@ public class tpmms {
     }
 
     public static void main(String[] args) {
-        System.out.println("This will be printed");
-
+        // makeTestFile();
         String filename = args[0];
         ArrayList<File> chunk = readFile(filename);
 
     }
+
+    // public static void makeTestFile() {
+    //     int i = 500;
+    //     try {
+    //         File myObj = new File("testfile1000.txt");
+    //         if (myObj.createNewFile()) {
+    //             System.out.println("File created: " + myObj.getName());
+    //         } else {
+    //             System.out.println("File already exists.");
+    //         }
+
+    //         try {
+    //             FileWriter myWriter = new FileWriter(myObj.getName());
+    //             while (i > 0) {
+    //                 myWriter.write(Integer.toString(i));
+    //                 myWriter.write('\n');
+    //                 i--;
+    //             }
+    //             myWriter.close();
+
+    //         } catch (IOException e) {
+    //             System.out.println("An error occurred.");
+    //             e.printStackTrace();
+    //         }
+
+    //     } catch (IOException e) {
+    //         System.out.println("An error occurred.");
+    //         e.printStackTrace();
+    //     }
+
+    // }
 
 }
