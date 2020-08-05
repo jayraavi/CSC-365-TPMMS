@@ -35,7 +35,7 @@ public class tpmms {
                     break;
                 }
                 run_index++;
-                // System.out.println(data);
+                
             }
             if (fileContents.size() > 0) {
                 Collections.sort(fileContents);
@@ -65,7 +65,6 @@ public class tpmms {
                 FileWriter myWriter = new FileWriter(myObj.getName());
                 int i = 0;
                 while (i < sortedArray.size()) {
-                    // System.out.println(sortedArray.get(i));
                     myWriter.write(Integer.toString(sortedArray.get(i)));
                     myWriter.write('\n');
                     i++;
@@ -88,32 +87,40 @@ public class tpmms {
 
     public static ArrayList<Node> initialBuffer(ArrayList<File> files) {
         ArrayList<Node> buffer = new ArrayList<>(100);
+        long fileptr = 0;
         for (File file : files) {
             try {
                 RandomAccessFile myReader = new RandomAccessFile(file, "r");
                 // Scanner myReader = new Scanner(file);
-                for (int i = 0; i < 5; i++) {
+                Integer bufferSize = 100 / files.size(); 
+                for (int i = 0; i < bufferSize; i++) {
                     String data = myReader.readLine();
-                    Integer data_int = Integer.valueOf(data);
-                    Node numNode = new Node(data_int, file);
-                    buffer.add(numNode);
+                    if (data != null){
+                        Integer data_int = Integer.valueOf(data);
+                        Node numNode = new Node(data_int, file);
+                        buffer.add(numNode);
+                    }
+                    
                 }
-                System.out.println("init ptr" + myReader.getFilePointer());
+                fileptr = myReader.getFilePointer();
                 myReader.close();
             } catch (Exception e) {
                 System.out.println("An error occurred.");
                 e.printStackTrace();
             }
         }
-        Collections.sort(buffer);
-        for (Node node : buffer) {
-            System.out.println(node.num);
-        }
+        Node first = new Node(null,null);
+        first.fileptr = fileptr;
+        buffer.add(0, first);
         return buffer;
     }
 
     public static void writeFromBuffer(ArrayList<Node> buffer, ArrayList<File> files) {
         HashMap<File, Long> filePtrs = new HashMap<>();
+        Node ptrNode = buffer.remove(0);
+        Collections.sort(buffer);
+        
+        Integer fileptr = Math.toIntExact(ptrNode.fileptr);
         try {
             File myObj = new File("final_results.txt");
             if (myObj.createNewFile()) {
@@ -124,16 +131,14 @@ public class tpmms {
             try {
                 FileWriter myWriter = new FileWriter("final_results.txt");
                 while (!buffer.isEmpty()) {
-                    System.out.println(buffer);
                     Node curNode = buffer.remove(0);
                     myWriter.write(Integer.toString(curNode.num));
                     myWriter.write("\n");
                     if (!filePtrs.containsKey(curNode.file)) {
-                        filePtrs.put(curNode.file, Integer.toUnsignedLong(10));
+                        filePtrs.put(curNode.file, Integer.toUnsignedLong(fileptr));
                     }
                     Node newNode = readFromFile(curNode.file, filePtrs.get(curNode.file));
                     if (newNode == null) {
-                        // System.out.println("bad");
                         continue;
                     }
 
@@ -155,38 +160,14 @@ public class tpmms {
 
     }
 
-    // public static Node writeToBuffer(File file) {
-    // try {
-
-    // Scanner myReader = new Scanner(file);
-    // String data = myReader.nextLine();
-    // if (data != null) {
-    // Integer data_int = Integer.valueOf(data);
-    // Node newNode = new Node(data_int, file);
-    // myReader.close();
-    // return newNode;
-    // }
-    // myReader.close();
-
-    // } catch (FileNotFoundException e) {
-    // System.out.println("An error occurred.");
-    // e.printStackTrace();
-    // }
-    // return null;
-
-    // }
-
     public static Node readFromFile(File filePath, Long position) throws IOException {
         RandomAccessFile file = new RandomAccessFile(filePath, "r");
         file.seek(position);
-        // System.out.println(file + " position");
         try {
             try {
                 Integer num = Integer.parseInt(file.readLine());
-                System.out.println("number " + num);
                 Node curNode = new Node(num, filePath);
                 curNode.fileptr = file.getFilePointer();
-                System.out.println("fileptr " + file.getFilePointer());
                 file.close();
                 return curNode;
             } catch (NumberFormatException ex) {
@@ -201,37 +182,9 @@ public class tpmms {
     public static void main(String[] args) {
         String filename = args[0];
         ArrayList<File> chunk = readFile(filename);
-        System.out.println(chunk);
         ArrayList<Node> initialBuffer = initialBuffer(chunk);
         writeFromBuffer(initialBuffer, chunk);
-        // try {
-        // final File myObj = new File("output.txt");
-        // if (myObj.createNewFile()) {
-        // System.out.println("File created: " + myObj.getName());
-        // } else {
-        // System.out.println("File already exists.");
-        // }
-
-        // try {
-        // final FileWriter myWriter = new FileWriter(myObj.getName());
-        // int i = 0;
-        // while (i < sortedNums.size()) {
-        // System.out.println(sortedNums.get(i));
-        // myWriter.write(Integer.toString(sortedNums.get(i)));
-        // myWriter.write('\n');
-        // i++;
-        // }
-        // myWriter.close();
-
-        // } catch (final IOException e) {
-        // System.out.println("An error occurred.");
-        // e.printStackTrace();
-        // }
-
-        // } catch (final IOException e) {
-        // System.out.println("An error occurred.");
-        // e.printStackTrace();
-        // }
+    
     }
 
 }

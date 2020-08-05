@@ -1,0 +1,7 @@
+Download all java and input text files. In your terminal, compile all java files 
+with the following command: javac tpmms.java Node.java 
+Next run the program with the following command: 
+    java tpmms <"input text file of your choice">
+The final output will be stored a file named "final_results.txt".
+If final_results.txt is already created, the current data will be overwritten with
+the new values.
